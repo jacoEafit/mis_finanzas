@@ -35,7 +35,7 @@ turn g = if os <= xs then O else X
             xs = length (filter (== X) ps)
             ps = concat g
 
---Function that returns true in case 3 same simbols are in same line
+--Returns true in case 3 same simbols are in same line
 wins :: Player -> Grid -> Bool
 wins p g = any line (rows ++ cols ++ dias)
            where
@@ -176,8 +176,13 @@ bestmove g p = head [g' | Node (g',p') _ <- ts, p' == best]
 -- Human vs computer
 
 main :: IO ()
-main = do hSetBuffering stdout NoBuffering
-          play empty O
+main = do 
+         hSetBuffering stdout NoBuffering
+         first <- askFirst
+         if first
+           then play empty O
+         else
+           do play empty X
 
 play :: Grid -> Player -> IO ()
 play g p = do cls
@@ -185,6 +190,7 @@ play g p = do cls
               putGrid g
               play' g p
 
+--Recursive function, checks if there is a winner or move is valid
 play' :: Grid -> Player -> IO ()
 play' g p
    | wins O g = putStrLn "Player O wins!\n"
@@ -197,3 +203,15 @@ play' g p
                       [g'] -> play g' (next p)
    | p == X   = do putStr "Player X is thinking... "
                    (play $! (bestmove g p)) (next p)
+
+--Función que utiliza monada de IO para producir un bool
+askFirst :: IO Bool
+askFirst = do putStrLn ("Do you wish to play first? (y/n):")
+              xs <- getLine
+              if xs == "y"
+                 then return True
+              else if xs == "n"
+                 then return False
+              else do
+                 putStrLn ("ERROR: Invalid value")
+                 askFirst
