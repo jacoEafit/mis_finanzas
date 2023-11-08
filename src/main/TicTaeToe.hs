@@ -2,22 +2,26 @@ import Data.Char
 import Data.List
 import System.IO
 
---
+-- Player data
+
+--Initializes grid size
 size :: Int
 size = 3
 
+--Initializes grid as a list of lists
 type Grid = [[Player]]
 
+--Creates a data structure that can be O,X or Blank
 data Player = O | B | X
               deriving (Eq, Ord, Show)
 
+--Function that modifies player value
 next :: Player -> Player
 next O = X
 next B = B
 next X = O
 
--- Grid utilities
-
+--
 empty :: Grid 
 empty = replicate size (replicate size B)
 
@@ -31,6 +35,7 @@ turn g = if os <= xs then O else X
             xs = length (filter (== X) ps)
             ps = concat g
 
+--Function that returns true in case 3 same simbols are in same line
 wins :: Player -> Grid -> Bool
 wins p g = any line (rows ++ cols ++ dias)
            where
@@ -70,20 +75,24 @@ interleave x (y:ys) = y : x : interleave x ys
 
 -- Making a move
 
+--Verifies if position inserted is valid
 valid :: Grid -> Int -> Bool
 valid g i = 0 <= i && i < size^2 && concat g !! i == B
 
+--In case position is valid, modifies the grid with player value
 move:: Grid -> Int -> Player -> [Grid]
 move g i p =
    if valid g i then [chop size (xs ++ [p] ++ ys)] else []
    where (xs,B:ys) = splitAt i (concat g)
 
+--Divides a list in sublists (size*size)
 chop :: Int -> [a] -> [[a]]
 chop n [] = []
 chop n xs = take n xs : chop n (drop n xs)
 
 -- Reading a natural number
 
+--Reads and verifies if number is a digit 
 getNat :: String -> IO Int
 getNat prompt = do putStr prompt
                    xs <- getLine
