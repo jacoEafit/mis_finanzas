@@ -7,8 +7,10 @@ import qualified UnitTests
 
 main :: IO ()
 main = do
-    --Runs Unit tests
+    putStrLn "Running RandomTests..."
+    void $ runTestTT RandomTests.tests 
+    putStrLn "Running UnitTests..."
     void $ runTestTT UnitTests.tests
-
-    --Runs Quickcheck tests
-    quickCheck RandomTests.prop_next 
+    putStrLn "Running ShowPlayerTests..."
+    void $ runTestTT ShowPlayerTests.tests
+    putStrLn "All tests completed." 

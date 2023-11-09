@@ -21,7 +21,7 @@ next O = X
 next B = B
 next X = O
 
---
+
 empty :: Grid 
 empty = replicate size (replicate size B)
 
